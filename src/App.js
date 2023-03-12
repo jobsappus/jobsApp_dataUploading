@@ -1,25 +1,68 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useImmerReducer } from 'use-immer'
+
+import StateContext from './StateContext'
+import DispatchContext from './DispatchContext'
+
+// login Page
+import Login from './components/Login'
+import Company from './components/Company'
+import Job from './components/Jobs'
+import FlashMessages from './components/FlashMessages'
+// company creating page
+// job posting page
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const initialState = {
+		token: localStorage.getItem('token'),
+		loggedIn: Boolean(localStorage.getItem('token')),
+		flashMessages: []
+	}
+
+	function ourReducer(draft, action) {
+		switch (action.type) {
+			case 'login':
+				draft.loggedIn = true
+				draft.token = action.value
+				return
+			case 'logout':
+				draft.loggedIn = false
+				return
+			case 'flashMessage':
+				draft.flashMessages.push(action.value)
+				return
+			default:
+				return
+		}
+	}
+	const [state, dispatch] = useImmerReducer(ourReducer, initialState)
+
+	useEffect(() => {
+		if (state.loggedIn) {
+			localStorage.setItem('token', state.token)
+		} else {
+			localStorage.removeItem('token')
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [state.loggedIn])
+
+	return (
+		<StateContext.Provider value={state}>
+			<DispatchContext.Provider value={dispatch}>
+				<BrowserRouter>
+					<FlashMessages messages={state.flashMessages} />
+					<Routes>
+						<Route
+							path="/"
+							element={state.loggedIn ? <Job /> : <Login />}
+						/>
+						<Route path="/company" element={<Company />} />
+					</Routes>
+				</BrowserRouter>
+			</DispatchContext.Provider>
+		</StateContext.Provider>
+	)
 }
 
-export default App;
+export default App
