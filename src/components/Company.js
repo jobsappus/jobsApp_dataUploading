@@ -1,4 +1,5 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Page from './Page'
 
 import ImageUpload from './Company_ImageUpload'
@@ -12,11 +13,27 @@ function Company() {
 	const appState = useContext(StateContext)
 	const appDispatch = useContext(DispatchContext)
 
+	const navigate = useNavigate()
+
 	const [uploading, setUploading] = useState(false)
 	const [file, setFile] = useState(null)
 	const [name, setName] = useState('')
 	const [h1b, setH1b] = useState('')
 	// console.log(file)
+
+	useEffect(() => {
+		if (!appState.loggedIn) {
+			appDispatch({
+				type: 'flashMessage',
+				value: {
+					message:
+						'You must be logged in as an admin to proceed with this action.',
+					color: 'danger'
+				}
+			})
+			navigate('/')
+		}
+	}, [])
 
 	async function handleSubmit(e) {
 		e.preventDefault()

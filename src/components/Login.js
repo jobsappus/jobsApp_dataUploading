@@ -42,6 +42,13 @@ function Login() {
 			}
 		} catch (err) {
 			console.log(err)
+			appDispatch({
+				type: 'flashMessage',
+				value: {
+					message: 'Please try again later',
+					color: 'danger'
+				}
+			})
 		}
 	}
 

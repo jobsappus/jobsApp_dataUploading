@@ -8,10 +8,9 @@ import DispatchContext from './DispatchContext'
 // login Page
 import Login from './components/Login'
 import Company from './components/Company'
-import Job from './components/Jobs'
+import Job from './components/Job'
+import JobCreate from './components/JobCreate'
 import FlashMessages from './components/FlashMessages'
-// company creating page
-// job posting page
 
 function App() {
 	const initialState = {
@@ -57,6 +56,7 @@ function App() {
 							path="/"
 							element={state.loggedIn ? <Job /> : <Login />}
 						/>
+						<Route path="/job" element={<JobCreate />} />
 						<Route path="/company" element={<Company />} />
 					</Routes>
 				</BrowserRouter>
