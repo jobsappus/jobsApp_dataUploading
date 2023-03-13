@@ -1,24 +1,25 @@
-import { useState, useContext, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import Page from './Page'
+import url from '../url';
+import { useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Page from './Page';
 
-import ImageUpload from './Company_ImageUpload'
-import Form from './Form'
+import ImageUpload from './Company_ImageUpload';
+import Form from './Form';
 
-import Axios from 'axios'
-import StateContext from '../StateContext'
-import DispatchContext from '../DispatchContext'
+import Axios from 'axios';
+import StateContext from '../StateContext';
+import DispatchContext from '../DispatchContext';
 
 function Company() {
-	const appState = useContext(StateContext)
-	const appDispatch = useContext(DispatchContext)
+	const appState = useContext(StateContext);
+	const appDispatch = useContext(DispatchContext);
 
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 
-	const [uploading, setUploading] = useState(false)
-	const [file, setFile] = useState(null)
-	const [name, setName] = useState('')
-	const [h1b, setH1b] = useState('')
+	const [uploading, setUploading] = useState(false);
+	const [file, setFile] = useState(null);
+	const [name, setName] = useState('');
+	const [h1b, setH1b] = useState('');
 	// console.log(file)
 
 	useEffect(() => {
@@ -28,47 +29,44 @@ function Company() {
 				value: {
 					message:
 						'You must be logged in as an admin to proceed with this action.',
-					color: 'danger'
-				}
-			})
-			navigate('/')
+					color: 'danger',
+				},
+			});
+			navigate('/');
 		}
-	}, [])
+	}, []);
 
 	async function handleSubmit(e) {
-		e.preventDefault()
-		setUploading(true)
-		const formData = new FormData()
-		formData.append('image', file)
-		formData.append('name', name)
-		formData.append('h1b', h1b)
-		formData.append('token', appState.token)
+		e.preventDefault();
+		setUploading(true);
+		const formData = new FormData();
+		formData.append('image', file);
+		formData.append('name', name);
+		formData.append('h1b', h1b);
+		formData.append('token', appState.token);
 		try {
-			const response = await Axios.post(
-				'http://localhost:8080/api/v1/companies',
-				formData
-			)
-			setUploading(false)
+			const response = await Axios.post(`${url}/api/v1/companies`, formData);
+			setUploading(false);
 			// console.log(response)
 			if (response.data.ok) {
 				appDispatch({
 					type: 'flashMessage',
 					value: {
 						message: 'Uploaded successfully!',
-						color: 'success'
-					}
-				})
+						color: 'success',
+					},
+				});
 			} else {
 				appDispatch({
 					type: 'flashMessage',
 					value: {
 						message: response.data.message,
-						color: 'danger'
-					}
-				})
+						color: 'danger',
+					},
+				});
 			}
 		} catch (err) {
-			console.log(err)
+			console.log(err);
 		}
 	}
 	return (
@@ -98,7 +96,7 @@ function Company() {
 				</div>
 			</div>
 		</Page>
-	)
+	);
 }
 
-export default Company
+export default Company;

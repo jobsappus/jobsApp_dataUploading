@@ -1,29 +1,30 @@
-import { useState, useEffect, useContext } from 'react'
-import Axios from 'axios'
-import { Form, Button } from 'react-bootstrap'
-import DatePicker from 'react-datepicker'
-import { useForm } from 'react-hook-form'
-import 'react-datepicker/dist/react-datepicker.css'
+import url from '../url';
+import { useState, useEffect, useContext } from 'react';
+import Axios from 'axios';
+import { Form, Button } from 'react-bootstrap';
+import DatePicker from 'react-datepicker';
+import { useForm } from 'react-hook-form';
+import 'react-datepicker/dist/react-datepicker.css';
 
-import StateContext from '../StateContext'
-import DispatchContext from '../DispatchContext'
+import StateContext from '../StateContext';
+import DispatchContext from '../DispatchContext';
 
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom';
 
-import Page from './Page'
+import Page from './Page';
 
 const JobCreate = () => {
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 
-	const appState = useContext(StateContext)
-	const appDispatch = useContext(DispatchContext)
+	const appState = useContext(StateContext);
+	const appDispatch = useContext(DispatchContext);
 
-	const [selectedDate, setSelectedDate] = useState(new Date())
+	const [selectedDate, setSelectedDate] = useState(new Date());
 	const {
 		register,
-		formState: { errors }
-	} = useForm()
-	const [companies, setCompanies] = useState([])
+		formState: { errors },
+	} = useForm();
+	const [companies, setCompanies] = useState([]);
 
 	// get the companies data
 	useEffect(() => {
@@ -33,75 +34,71 @@ const JobCreate = () => {
 				value: {
 					message:
 						'You must be logged in as an admin to proceed with this action.',
-					color: 'danger'
-				}
-			})
-			navigate('/')
-			return
+					color: 'danger',
+				},
+			});
+			navigate('/');
+			return;
 		}
 
-		const ourRequest = Axios.CancelToken.source()
+		const ourRequest = Axios.CancelToken.source();
 		async function fetchResults() {
 			try {
-				const response = await Axios.get(
-					'http://localhost:8080/api/v1/companies'
-				)
-				console.log(response.data)
-				setCompanies(response.data.data.sort((a, b) => a.name > b.name))
+				const response = await Axios.get(`${url}/api/v1/companies`);
+				console.log(response.data);
+				setCompanies(response.data.data.sort((a, b) => a.name > b.name));
 			} catch (e) {
-				console.log('There was a problem or the request was cancelled.')
+				console.log('There was a problem or the request was cancelled.');
 			}
 		}
-		fetchResults()
+		fetchResults();
 		return () => {
-			ourRequest.cancel()
-		}
-	}, [])
+			ourRequest.cancel();
+		};
+	}, []);
 
 	const onSubmit = async e => {
-		e.preventDefault()
-		const { company, jobTitle, jobLink, jobDate, jobType, jobDesc } = e.target
+		e.preventDefault();
+		const { company, jobTitle, jobLink, jobDate, jobType, jobDesc } =
+			e.target;
 		try {
-			const response = await Axios.post(
-				'http://localhost:8080/api/v1/jobs',
-				{
-					companyId: company.value,
-					jobTitle: jobTitle.value,
-					jobLink: jobLink.value,
-					jobPostedDate: jobDate.value,
-					jobType: jobType.value,
-					jobDesc: jobDesc.value,
-					token: appState.token
-				}
-			)
+			const response = await Axios.post(`${url}/api/v1/jobs`, {
+				companyId: company.value,
+				jobTitle: jobTitle.value,
+				jobLink: jobLink.value,
+				jobPostedDate: jobDate.value,
+				jobType: jobType.value,
+				jobDesc: jobDesc.value,
+				token: appState.token,
+			});
 
 			if (response.data.ok) {
 				appDispatch({
 					type: 'flashMessage',
 					value: {
 						message: 'Job posted successfully!!',
-						color: 'success'
-					}
-				})
+						color: 'success',
+					},
+				});
 				setTimeout(() => {
-					window.location.reload()
-				}, 2000)
+					window.location.reload();
+				}, 2000);
 			} else {
 				appDispatch({
 					type: 'flashMessage',
 					value: response.data.message,
-					color: 'danger'
-				})
+					color: 'danger',
+				});
 			}
 		} catch (err) {
-			console.log(err)
+			console.log(err);
 			appDispatch({
 				type: 'flashMessage',
 				value: 'error uploading',
-				color: 'danger'
-			})
+				color: 'danger',
+			});
 		}
-	}
+	};
 	return (
 		<Page title="Add Jobs" fluid={true}>
 			<div className="login-form-container">
@@ -208,7 +205,7 @@ const JobCreate = () => {
 				</div>
 			</div>
 		</Page>
-	)
-}
+	);
+};
 
-export default JobCreate
+export default JobCreate;

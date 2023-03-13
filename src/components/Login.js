@@ -1,54 +1,52 @@
-import { useState, useContext } from 'react'
-import Axios from 'axios'
-import Page from './Page'
+import url from '../url';
+import { useState, useContext } from 'react';
+import Axios from 'axios';
+import Page from './Page';
 
-const DispatchContext = require('../DispatchContext')
+const DispatchContext = require('../DispatchContext');
 
 function Login() {
-	const appDispatch = useContext(DispatchContext)
+	const appDispatch = useContext(DispatchContext);
 
-	const [loginId, setLoginId] = useState('')
-	const [password, setPassword] = useState('')
+	const [loginId, setLoginId] = useState('');
+	const [password, setPassword] = useState('');
 
 	async function handleSubmit(e) {
-		e.preventDefault()
+		e.preventDefault();
 		try {
-			const response = await Axios.post(
-				'http://localhost:8080/api/v1/users/login',
-				{
-					loginId,
-					password
-				}
-			)
+			const response = await Axios.post(`${url}/api/v1/users/login`, {
+				loginId,
+				password,
+			});
 
 			if (response.data.ok) {
 				appDispatch({
 					type: 'flashMessage',
 					value: {
 						message: 'Logged in successfully! Welcome man',
-						color: 'success'
-					}
-				})
-				appDispatch({ type: 'login', value: response.data.token })
+						color: 'success',
+					},
+				});
+				appDispatch({ type: 'login', value: response.data.token });
 			} else {
-				setPassword('')
+				setPassword('');
 				appDispatch({
 					type: 'flashMessage',
 					value: {
 						message: 'Invalid login ID or password',
-						color: 'danger'
-					}
-				})
+						color: 'danger',
+					},
+				});
 			}
 		} catch (err) {
-			console.log(err)
+			console.log(err);
 			appDispatch({
 				type: 'flashMessage',
 				value: {
 					message: 'Please try again later',
-					color: 'danger'
-				}
-			})
+					color: 'danger',
+				},
+			});
 		}
 	}
 
@@ -99,7 +97,7 @@ function Login() {
 				</div>
 			</div>
 		</Page>
-	)
+	);
 }
 
-export default Login
+export default Login;

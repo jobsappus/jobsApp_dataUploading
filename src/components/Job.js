@@ -1,37 +1,36 @@
-import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import axios from 'axios'
+import url from '../url';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 function Jobs() {
-	const [jobs, setJobs] = useState([])
+	const [jobs, setJobs] = useState([]);
 
 	function parse(timestamp) {
-		const date = new Date(timestamp)
+		const date = new Date(timestamp);
 
 		// Extract the day, month, and year components from the Date object
-		const day = date.getDate()
-		const month = date.getMonth() + 1
-		const year = date.getFullYear()
+		const day = date.getDate();
+		const month = date.getMonth() + 1;
+		const year = date.getFullYear();
 
 		// Convert the components into a string in the format "dd/mm/yyyy"
-		return `${day}/${month}/${year}`
+		return `${day}/${month}/${year}`;
 	}
 
 	const deleteHandle = async e => {
-		const response = window.confirm('Are you sure you want to do that?')
+		const response = window.confirm('Are you sure you want to do that?');
 
 		if (response) {
-			await axios.delete(
-				`http://localhost:8080/api/v1/jobs/${e.target.value}`
-			)
+			await axios.delete(`${url}/api/v1/jobs/${e.target.value}`);
 		}
-		return
-	}
+		return;
+	};
 	useEffect(() => {
-		axios.get('http://localhost:8080/api/v1/jobs').then(response => {
-			setJobs(response.data.data)
-		})
-	}, [])
+		axios.get(`${url}/api/v1/jobs`).then(response => {
+			setJobs(response.data.data);
+		});
+	}, []);
 
 	return (
 		<div>
@@ -92,7 +91,7 @@ function Jobs() {
 				</tbody>
 			</table>
 		</div>
-	)
+	);
 }
 
-export default Jobs
+export default Jobs;
