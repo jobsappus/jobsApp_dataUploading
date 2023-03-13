@@ -48,6 +48,9 @@ function Company() {
 			const response = await Axios.post(`${url}/api/v1/companies`, formData);
 			setUploading(false);
 			// console.log(response)
+			setFile(null);
+			setName('');
+			setH1b('');
 			if (response.data.ok) {
 				appDispatch({
 					type: 'flashMessage',

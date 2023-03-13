@@ -37,7 +37,7 @@ function Jobs() {
 			<div className="d-flex justify-content-between mb-3">
 				<h1>Job Openings</h1>
 				<Link to="/job" className="btn btn-primary">
-					Add New Job
+					Add company/Job
 				</Link>
 			</div>
 			<table className="table table-stripped">
